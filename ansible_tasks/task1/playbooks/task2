@@ -1,0 +1,25 @@
+---
+- name: task1
+  hosts: nodes
+  user: ansible
+
+  tasks:
+  - name: disable httpd
+    service:
+      name: httpd
+      state: stopped
+      enabled: no
+  - name: uinstall httpd
+    yum:
+       name: httpd
+       state: removed
+  - name: delete file
+    file:
+      dest: /var/www/html/index.html
+      state: absent
+  - name: close port
+    firewalld:
+      port: 80/tcp
+      permanent: yes
+      state: disabled
+...
