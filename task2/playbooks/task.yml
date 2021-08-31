@@ -1,0 +1,19 @@
+---
+- name: task1
+  hosts: nodes
+  vars_files:
+    - /ansible_tasks/task2/pass.yml
+
+  tasks:
+  - name: create user
+    user:
+       name: "{{ item.name  }}"
+       comment: "{{ item.comment }}"
+       home: "{{ item.home }}"
+       password: "{{ item.password | string | password_hash('sha512') }}"
+       update_password: on_create
+    loop:
+      - { name: 'Alice', comment: 'alice@example.com', home: /home/Alice, password: "{{ pass_alice }}" }
+      - { name: 'Bob', comment: 'bob@example.com', home: /home/Bob, password: "{{ pass_bob }}" }
+      - { name: 'Carol', comment: 'carol@example.com', home: /home/Carol, password: "{{ pass_carol }}" }
+...
