@@ -1,0 +1,11 @@
+---
+- name: restart package
+  service:
+    name: "{{ package }}"
+    state: restarted
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted
+...
+# handlers file for task1

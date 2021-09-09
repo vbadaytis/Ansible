@@ -1,0 +1,8 @@
+---
+package: vsftpd
+ports: 
+  - 20-21/tcp
+  - 40900-40999/tcp
+anon_root: "/var/ftp/pub/"
+...
+# vars file for task2

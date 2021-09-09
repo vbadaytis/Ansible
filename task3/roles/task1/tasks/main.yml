@@ -1,0 +1,29 @@
+---
+- name: install package
+  yum:
+    name: "{{ package }}"
+    state: latest
+- name: enable package
+  service:
+    name: "{{ package }}"
+    state: started
+    enabled: yes
+- name: Gathering service facts
+  service_facts:
+  register: services_state
+- debug: var=services_state.ansible_facts.services["{{ package }}.service"].state
+- name: create file
+  copy:
+    content: "Welcome to my web server"
+    dest: /var/www/html/index.html
+  notify: restart package
+- name: open port
+  firewalld:
+    port: 80/tcp
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  notify: restart firewalld
+...
+# tasks file for task1

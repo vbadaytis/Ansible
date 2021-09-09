@@ -1,0 +1,45 @@
+---
+- name: install package
+  yum:
+    name: "{{ package }}"
+    state: latest
+- name: open port
+  firewalld:
+    port: "{{ item }}"
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop: "{{ ports }}"
+  notify: restart firewalld
+- name: create a directory upload
+  file:
+    path: /var/ftp/pub/upload
+    state: directory
+    mode: 0777
+- name: install policycoreutils-python
+  yum:
+    name: policycoreutils-python
+    state: latest
+- name: Set SELinux ftpd_anon_write on
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+- name: create vsftpd.conf
+  template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+    mode: 0777
+  notify: restart package
+- name: enable package
+  service:
+    name: "{{ package }}"
+    state: started
+    enabled: yes
+- name: Gathering service facts
+  service_facts:
+  register: services_state
+- debug: var=services_state.ansible_facts.services["{{ package }}.service"].state
+...
+# tasks file for task2
